@@ -1,6 +1,6 @@
 import { Octokit } from "@octokit/rest";
-const { createAppAuth } = require("@octokit/auth-app");
-import { Mongo } from "./helpers/mongo";
+import { createAppAuth } from '@octokit/auth-app';
+import { Mongo } from "metabot-utils";
 import express from 'express';
 import dotenv from 'dotenv'
 
@@ -12,7 +12,7 @@ app.get('/', async (req, res) => {
   const owner = req.query.owner as string;
   const repo = req.query.repo as string;
   const issue_number = parseInt(req.query.issueNumber as string);
-  const label = req.query.label;
+  const label = req.query.label as string;
   const installationId = req.query.installationId;
 
   const appOctokit = new Octokit({
@@ -22,7 +22,7 @@ app.get('/', async (req, res) => {
       privateKey: process.env.PRIVATE_KEY,
       installationId
     }
-  }) 
+  })
 
   const mongo = new Mongo(process.env.MONGO_CONN_STRING!);
 
