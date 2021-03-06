@@ -19,7 +19,7 @@ app.get('/comments', async (req, res) => {
     authStrategy: createAppAuth,
     auth: {
       appId: parseInt(process.env.APP_ID!),
-      privateKey: process.env.PRIVATE_KEY,
+      privateKey: process.env.PRIVATE_KEY!.replace(/\\n/gm, '\n'),
       installationId
     }
   })
