@@ -8,7 +8,7 @@ dotenv.config();
 const app = express()
 const port = process.env.PORT || 3000
 
-app.get('/', async (req, res) => {
+app.get('/comments', async (req, res) => {
   const owner = req.query.owner as string;
   const repo: string = req.query.repo as string;
   const issue_number = parseInt(req.query.issueNumber as string);
@@ -18,7 +18,7 @@ app.get('/', async (req, res) => {
   const appOctokit = new Octokit({
     authStrategy: createAppAuth,
     auth: {
-      appId: parseInt(process.env.APP_ID),
+      appId: parseInt(process.env.APP_ID!),
       privateKey: process.env.PRIVATE_KEY,
       installationId
     }
@@ -48,6 +48,10 @@ app.get('/', async (req, res) => {
   res.redirect(`https://github.com/${owner}/${repo}/pull/${issue_number}`);
 })
 
+app.get('/', async (req, res) => {
+  res.redirect("https://github.com/EricRibeiro/metabot-express");
+})
+
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`Example app listening at http://localhost:${port}`);
 })
