@@ -42,7 +42,7 @@ app.get('/comments', async (req, res) => {
     owner,
     repo,
     issue_number,
-    body: `Here are the comments with the label **${label}**:\n${comments}`
+    body: `Here are the comments with the label **${label}**:\n\n${comments}`
   })
 
   res.redirect(`https://github.com/${owner}/${repo}/pull/${issue_number}`);
