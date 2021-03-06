@@ -10,15 +10,15 @@ const port = process.env.PORT || 3000
 
 app.get('/', async (req, res) => {
   const owner = req.query.owner as string;
-  const repo = req.query.repo as string;
+  const repo: string = req.query.repo as string;
   const issue_number = parseInt(req.query.issueNumber as string);
   const label = req.query.label as string;
-  const installationId = req.query.installationId;
+  const installationId = req.query.installationId as string;
 
   const appOctokit = new Octokit({
     authStrategy: createAppAuth,
     auth: {
-      appId: process.env.APP_ID,
+      appId: parseInt(process.env.APP_ID),
       privateKey: process.env.PRIVATE_KEY,
       installationId
     }
