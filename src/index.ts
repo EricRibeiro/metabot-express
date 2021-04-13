@@ -12,7 +12,10 @@ app.post('/events', async (req, res) => {
   const document = req.body;
   const connString = process.env.MONGO_CONN_STRING!;
 
+  console.log(`Request body: ${JSON.stringify(document)}`)
+
   if (!document) {
+    console.log("Body is empty!");
     res.status(400).send({ error: "Request body cannot be empty." });
     return;
   };
@@ -20,10 +23,12 @@ app.post('/events', async (req, res) => {
   const { result, error } = await new Mongo(connString).insertOne("metabot", "analytics", document)
 
   if (error) {
+    console.log(`Error saving on database: ${JSON.stringify(error)}`)
     res.send({ error });
     return;
 
   } else {
+    console.log(`Saving on DB went all right: ${JSON.stringify(result)}`)
     res.status(200).send({ result });
     return;
   }
