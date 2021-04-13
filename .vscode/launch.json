@@ -5,8 +5,8 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "command": "npm run nodemon",
-            "name": "Run npm nodemon",
+            "command": "yarn build && yarn run start",
+            "name": "Run yarn start",
             "request": "launch",
             "type": "node-terminal"
         }

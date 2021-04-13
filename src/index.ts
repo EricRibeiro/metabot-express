@@ -1,51 +1,32 @@
-import { Octokit } from "@octokit/rest";
-import { createAppAuth } from '@octokit/auth-app';
 import { Mongo } from "metabot-utils";
 import express from 'express';
 import dotenv from 'dotenv'
 
 dotenv.config();
 const app = express()
+app.use(express.json());
+
 const port = process.env.PORT || 3000
 
-app.get('/comments', async (req, res) => {
-  const owner = req.query.owner as string;
-  const repo: string = req.query.repo as string;
-  const issue_number = parseInt(req.query.issueNumber as string);
-  const label = req.query.label as string;
-  const installationId = req.query.installationId as string;
+app.post('/events', async (req, res) => {
+  const document = req.body;
+  const connString = process.env.MONGO_CONN_STRING!;
 
-  const appOctokit = new Octokit({
-    authStrategy: createAppAuth,
-    auth: {
-      appId: parseInt(process.env.APP_ID!),
-      privateKey: process.env.PRIVATE_KEY!.replace(/\\n/gm, '\n'),
-      installationId
-    }
-  })
+  if (!document) {
+    res.status(400).send({ error: "Request body cannot be empty." });
+    return;
+  };
 
-  const mongo = new Mongo(process.env.MONGO_CONN_STRING!);
+  const { result, error } = await new Mongo(connString).insertOne("metabot", "analytics", document)
 
-  const { documents, error } = await mongo.findAll("metabot", "comments", {
-    owner,
-    repo,
-    issue_number,
-    ...(label !== "all" && { label })
-  })
+  if (error) {
+    res.send({ error });
+    return;
 
-  if (error) throw error;
-
-  const comments = documents.map((curr: any) => { return curr.comment.body })
-    .join("\n");
-
-  await appOctokit.issues.createComment({
-    owner,
-    repo,
-    issue_number,
-    body: `Here are the comments with the label **${label}**:\n\n${comments}`
-  })
-
-  res.redirect(`https://github.com/${owner}/${repo}/pull/${issue_number}`);
+  } else {
+    res.status(200).send({ result });
+    return;
+  }
 })
 
 app.get('/', async (req, res) => {
