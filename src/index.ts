@@ -14,7 +14,9 @@ app.post('/events', async (req, res) => {
 
   console.log(`Request body: ${JSON.stringify(document)}`)
 
-  if (!document) {
+  const isEmpty = (obj: any) => {return obj && Object.keys(obj).length === 0 && obj.constructor === Object}
+
+  if (isEmpty(document)) {
     console.log("Body is empty!");
     res.status(400).send({ error: "Request body cannot be empty." });
     return;
